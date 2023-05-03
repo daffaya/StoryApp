@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_people">Halo Kawan</string>
+    <string name="welcome_back">Selamat Datang</string>
+    <string name="don_t_have_account">Belum punya akun?<font color="#C58BF2"> Daftar</font></string>
+    <string name="minimum_password_character">Password harus lebih dari 8 huruf</string>
+    <string name="email_format">Format Email tidak valid</string>
+    <string name="already_have_account">Sudah punya akun?<font color="#C58BF2"> Login</font></string>
+    <string name="name">Nama</string>
+    <string name="register_page">Halaman Register</string>
+</resources>

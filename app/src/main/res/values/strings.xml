@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name" translatable="false">Story App</string>
+    <string name="hello_people">Hi Folks</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="password" translatable="false">Password</string>
+    <string name="login" translatable="false">Login</string>
+    <string name="don_t_have_account">Don\'t have an account yet?<font color="#C58BF2"> Register</font></string>
+    <string name="minimum_password_character">Password must be at least 8 character</string>
+    <string name="email_format">Invalid email format</string>
+    <string name="already_have_account">Already have an account?<font color="#C58BF2"> Login</font></string>
+    <string name="name">Name</string>
+    <string name="register" translatable="false">Register</string>
+    <string name="register_page">Register Page</string>
+</resources>
