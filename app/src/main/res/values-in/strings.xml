@@ -10,4 +10,9 @@
     <string name="register_page">Halaman Register</string>
     <string name="title_home">Beranda</string>
     <string name="setting">Pengaturan</string>
+    <string name="logout">Keluar</string>
+    <string name="logout_alert">Apakah kamu yakin?</string>
+    <string name="logout_message">Kamu ingin keluar? Apakah kamu ingin melanjutkan?</string>
+    <string name="logout_message_success">Berhasil keluar</string>
+    <string name="cancel">Batal</string>
 </resources>

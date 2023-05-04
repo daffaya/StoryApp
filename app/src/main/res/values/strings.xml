@@ -14,4 +14,9 @@
     <string name="register_page">Register Page</string>
     <string name="title_home">Home</string>
     <string name="setting">Setting</string>
+    <string name="logout">Logout</string>
+    <string name="logout_alert">Are You Sure?</string>
+    <string name="logout_message">You are going to logout? Do you like to continue?</string>
+    <string name="logout_message_success">Logged out Successfully</string>
+    <string name="cancel">Cancel</string>
 </resources>
