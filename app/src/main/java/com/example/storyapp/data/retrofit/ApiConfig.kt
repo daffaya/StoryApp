@@ -15,8 +15,6 @@ class ApiConfig {
             .build()
 
         val retrofit = Retrofit.Builder()
-            // TODO: Base URL nya https://story-api.dicoding.dev/v1
-                // Yang kayak /login, /register itu endpoint, ditulisnya di ApiService.kt bukan disini
             .baseUrl("https://story-api.dicoding.dev/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
