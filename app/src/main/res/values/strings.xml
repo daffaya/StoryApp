@@ -19,4 +19,6 @@
     <string name="logout_message">You are going to logout? Do you like to continue?</string>
     <string name="logout_message_success">Logged out Successfully</string>
     <string name="cancel">Cancel</string>
+    <string name="stories" translatable="false">Stories</string>
+    <string name="create_story">Create Story</string>
 </resources>

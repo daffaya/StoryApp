@@ -15,4 +15,5 @@
     <string name="logout_message">Kamu ingin keluar? Apakah kamu ingin melanjutkan?</string>
     <string name="logout_message_success">Berhasil keluar</string>
     <string name="cancel">Batal</string>
+    <string name="create_story">Buat Cerita</string>
 </resources>
