@@ -51,7 +51,6 @@
         android:layout_marginHorizontal="@dimen/spacing_32"
         android:drawablePadding="@dimen/spacing_8"
         android:drawableStart="@drawable/ic_lock"
-        android:drawableEnd="@drawable/ic_password"
         android:hint="@string/password"
         android:inputType="textPassword"
         android:padding="15dp"

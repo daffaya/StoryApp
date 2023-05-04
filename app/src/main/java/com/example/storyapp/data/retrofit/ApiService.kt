@@ -9,7 +9,7 @@ interface ApiService {
     @POST("register")
     suspend fun register(
         @Body requestBody: HashMap<String, String>
-    ): GeneralResponse
+    ): LoginResponse
 
     @POST("login")
     suspend fun login(
