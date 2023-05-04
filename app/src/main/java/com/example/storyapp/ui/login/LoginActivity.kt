@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.storyapp.MainActivity
 import com.example.storyapp.ui.register.RegisterActivity
 import com.example.storyapp.databinding.ActivityLoginBinding
+import com.example.storyapp.ui.story.StoryActivity
 import com.example.storyapp.utils.ResultState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         is ResultState.Success -> {
                             binding.rvLoading.visibility = View.GONE
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            val intent = Intent(this@LoginActivity, StoryActivity::class.java)
                             startActivity(intent)
                             finish()
                         }

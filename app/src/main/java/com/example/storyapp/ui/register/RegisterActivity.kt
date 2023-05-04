@@ -48,7 +48,7 @@ class RegisterActivity : AppCompatActivity() {
                         }
                         is ResultState.Success -> {
                             binding.rvLoading.visibility = View.GONE
-                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                            val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                             startActivity(intent)
                             finish()
                         }

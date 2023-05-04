@@ -8,4 +8,6 @@
     <string name="already_have_account">Sudah punya akun?<font color="#C58BF2"> Login</font></string>
     <string name="name">Nama</string>
     <string name="register_page">Halaman Register</string>
+    <string name="title_home">Beranda</string>
+    <string name="setting">Pengaturan</string>
 </resources>

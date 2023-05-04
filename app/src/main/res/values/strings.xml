@@ -12,4 +12,6 @@
     <string name="name">Name</string>
     <string name="register" translatable="false">Register</string>
     <string name="register_page">Register Page</string>
+    <string name="title_home">Home</string>
+    <string name="setting">Setting</string>
 </resources>
