@@ -14,6 +14,6 @@ interface ApiService {
     @POST("login")
     suspend fun login(
         @Body requestBody: HashMap<String, String>
-    ): LoginResponse
+    ): retrofit2.Response<LoginResponse>
 
 }

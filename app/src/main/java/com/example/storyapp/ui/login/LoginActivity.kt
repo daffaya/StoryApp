@@ -3,12 +3,16 @@ package com.example.storyapp.ui.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.storyapp.MainActivity
 import com.example.storyapp.ui.register.RegisterActivity
 import com.example.storyapp.databinding.ActivityLoginBinding
 import com.example.storyapp.ui.home.HomeFragment
@@ -29,28 +33,38 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.loginState.collect { resultState ->
-                    when (resultState) {
-                        is ResultState.Error -> {
-                            Snackbar.make(
-                                binding.root,
-                                resultState.message,
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                        is ResultState.Idle -> {
-                            // do nothing, just stay idle
-                        }
-                        is ResultState.Loading -> {
-                            binding.rvLoading.visibility = View.VISIBLE
-                        }
-                        is ResultState.Success -> {
-                            binding.rvLoading.visibility = View.GONE
-                            val intent = Intent(this@LoginActivity, HomeFragment::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
+            viewModel.loginState.collect { resultState ->
+                Log.d(
+                    LoginActivity::class.java.simpleName,
+                    "State: ${resultState.javaClass}"
+                )
+
+                when (resultState) {
+                    is ResultState.Error -> {
+//                        TODO: Tadi kurang ini, jadinya loading-nya gak ke-hide pas error
+                        binding.rvLoading.visibility = View.GONE
+
+                        Snackbar.make(
+                            binding.root,
+                            resultState.message,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is ResultState.Idle -> {
+                        // do nothing, just stay idle
+                    }
+
+                    is ResultState.Loading -> {
+                        binding.rvLoading.visibility = View.VISIBLE
+                    }
+
+                    is ResultState.Success -> {
+                        binding.rvLoading.visibility = View.GONE
+
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -73,6 +87,6 @@ class LoginActivity : AppCompatActivity() {
                 )
             )
         }
+
     }
 }
-

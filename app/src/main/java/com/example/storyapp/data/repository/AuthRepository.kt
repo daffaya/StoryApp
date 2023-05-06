@@ -1,10 +1,10 @@
 package com.example.storyapp.data.repository
 
-import com.example.storyapp.data.response.GeneralResponse
-import com.example.storyapp.data.response.LoginResponse
-import kotlinx.coroutines.flow.Flow
+import com.example.storyapp.data.retrofit.ApiService
 
-interface AuthRepository {
-    fun register(email: String, password: String, name: String): Flow<GeneralResponse>
-    fun login(email: String, password: String): Flow<LoginResponse>
+class AuthRepository constructor(
+    private val apiService: ApiService,
+    private val preferencesDataStore: AuthPreferencesDataStore
+){
+
 }
