@@ -3,27 +3,27 @@ package com.example.storyapp.ui.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
-import androidx.fragment.app.commit
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.storyapp.MainActivity
+import com.example.storyapp.R
 import com.example.storyapp.ui.register.RegisterActivity
 import com.example.storyapp.databinding.ActivityLoginBinding
-import com.example.storyapp.ui.home.HomeFragment
-import com.example.storyapp.utils.ResultState
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+
+@Suppress("DEPRECATION")
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-
     private lateinit var viewModel: LoginViewModel
+    private var loginJob: Job = Job()
+
+    companion object {
+        const val EXTRA_TOKEN = "extra_token"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,62 +31,79 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
-        lifecycleScope.launch {
-            viewModel.loginState.collect { resultState ->
-                Log.d(
-                    LoginActivity::class.java.simpleName,
-                    "State: ${resultState.javaClass}"
-                )
+        redirect()
 
-                when (resultState) {
-                    is ResultState.Error -> {
-//                        TODO: Tadi kurang ini, jadinya loading-nya gak ke-hide pas error
-                        binding.rvLoading.visibility = View.GONE
+    }
 
-                        Snackbar.make(
-                            binding.root,
-                            resultState.message,
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
+    private fun redirect() {
+        binding.apply {
+            tvRegister.setOnClickListener {
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+                startActivity(intent)
+            }
 
-                    is ResultState.Idle -> {
-                        // do nothing, just stay idle
-                    }
+            btnLogin.setOnClickListener {
+                handleLogin()
+            }
+        }
+    }
 
-                    is ResultState.Loading -> {
-                        binding.rvLoading.visibility = View.VISIBLE
-                    }
+    private fun handleLogin() {
+        val email = binding.edLoginEmail.text.toString().trim()
+        val password = binding.edLoginPassword.text.toString()
+        showLoading(true)
 
-                    is ResultState.Success -> {
-                        binding.rvLoading.visibility = View.GONE
+        lifecycleScope.launchWhenResumed {
+            if (loginJob.isActive) loginJob.cancel()
 
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+            loginJob = launch {
+                viewModel.login(email, password).collect { result ->
+                    result.onSuccess { authentication ->
+                        val loginResult = authentication.loginResult
+                        if (loginResult != null) {
+                            val token = loginResult.token
+                            if (token != null) {
+                                viewModel.saveAuthToken(token)
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                intent.putExtra(EXTRA_TOKEN, token)
+                                startActivity(intent)
+                                finish()
+                            }
+
+                            Toast.makeText(
+                                this@LoginActivity,
+                                getString(R.string.login_success_msg),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        result.onFailure {
+                            Snackbar.make(
+                                binding.root,
+                                getString(R.string.login_error_msg),
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+
+                            showLoading(false)
+                        }
                     }
                 }
             }
         }
+    }
 
-        binding.btnLogin.setOnClickListener {
-            if (!binding.edLoginEmail.isEmailValid()) {
-                Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+    fun showLoading(isLoading: Boolean) {
+        binding.apply {
+            edLoginEmail.isEnabled = !isLoading
+            edLoginPassword.isEnabled = !isLoading
+            btnLogin.isEnabled = !isLoading
+
+            // Animate views alpha
+            if (isLoading) {
+                rvLoading.visibility = View.VISIBLE
             } else {
-                val email = binding.edLoginEmail.text.toString().trim()
-                val password = binding.edLoginPassword.text.toString().trim()
-                viewModel.login(email, password)
+                rvLoading.visibility = View.GONE
             }
         }
-
-        binding.tvRegister.setOnClickListener {
-            startActivity(
-                Intent(
-                    this, RegisterActivity::class.java
-                )
-            )
-        }
-
     }
 }

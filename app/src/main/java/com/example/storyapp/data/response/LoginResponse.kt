@@ -1,13 +1,25 @@
 package com.example.storyapp.data.response
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginResponse(
-    val error: Boolean,
-    val loginResult: LoginResult?,
-    val message: String
+    @field:SerializedName("loginResult")
+    val loginResult: LoginResult? = null,
+
+    @field:SerializedName("error")
+    val error: Boolean? = null,
+
+    @field:SerializedName("message")
+    val message: String? = null
 )
 
 data class LoginResult(
-    val name: String,
-    val token: String,
-    val userId: String
+    @field:SerializedName("name")
+    val name: String? = null,
+
+    @field:SerializedName("userId")
+    val userId: String? = null,
+
+    @field:SerializedName("token")
+    val token: String? = null
 )

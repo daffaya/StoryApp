@@ -16,4 +16,9 @@
     <string name="logout_message_success">Berhasil keluar</string>
     <string name="cancel">Batal</string>
     <string name="create_story">Buat Cerita</string>
+    <string name="login_success">Berhasil Login</string>
+    <string name="login_error_msg">Gagal Login</string>
+    <string name="login_success_msg">Berhasil Login</string>
+    <string name="register_success_msg">Berhasil Mendaftar</string>
+    <string name="registrater_error_msg">Gagal Mendaftar</string>
 </resources>

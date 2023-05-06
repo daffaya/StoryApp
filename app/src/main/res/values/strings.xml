@@ -21,4 +21,10 @@
     <string name="cancel">Cancel</string>
     <string name="stories" translatable="false">Stories</string>
     <string name="create_story">Create Story</string>
+    <string name="login_error" translatable="false">Login Error</string>
+    <string name="login_success">Login Success</string>
+    <string name="login_error_msg">Login Failed</string>
+    <string name="login_success_msg">Login Success</string>
+    <string name="register_success_msg">Registration Success</string>
+    <string name="registrater_error_msg">Registration Failed</string>
 </resources>
