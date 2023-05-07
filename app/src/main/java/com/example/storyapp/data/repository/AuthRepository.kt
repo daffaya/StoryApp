@@ -45,5 +45,9 @@ class AuthRepository constructor(
         preferencesDataStore.saveToken(token)
     }
 
+    suspend fun clearToken(token: String){
+        preferencesDataStore.clearToken(token)
+    }
+
     fun getAuthToken(): Flow<String?> = preferencesDataStore.getToken()
 }

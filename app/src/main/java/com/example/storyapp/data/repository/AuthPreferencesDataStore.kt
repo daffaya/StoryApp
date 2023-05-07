@@ -21,6 +21,12 @@ class AuthPreferencesDataStore constructor(private val dataStore: DataStore<Pref
         }
     }
 
+    suspend fun clearToken(token: String){
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     companion object {
         private val TOKEN_KEY = stringPreferencesKey("token_data")
     }

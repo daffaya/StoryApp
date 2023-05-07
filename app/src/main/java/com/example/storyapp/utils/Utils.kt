@@ -8,8 +8,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.widget.TextView
 import com.example.storyapp.R
 import java.io.*
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,6 +38,14 @@ fun createFile(application: Application): File {
     ) mediaDir else application.filesDir
 
     return File(outputDirectory, "$timeStamp.jpg")
+}
+
+fun TextView.dateFormat(timestamp: String) {
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    val date = sdf.parse(timestamp) as Date
+
+    val formattedDate = DateFormat.getDateInstance(DateFormat.FULL).format(date)
+    this.text = formattedDate
 }
 
 fun rotateFile(file: File, isBackCamera: Boolean = false) {

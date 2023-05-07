@@ -1,15 +1,23 @@
 package com.example.storyapp.ui.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.storyapp.MainActivity
 import com.example.storyapp.R
-import com.example.storyapp.ui.register.RegisterActivity
+import com.example.storyapp.data.repository.AuthPreferencesDataStore
+import com.example.storyapp.data.repository.AuthRepository
+import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.databinding.ActivityLoginBinding
+import com.example.storyapp.ui.register.RegisterActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -20,6 +28,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
     private var loginJob: Job = Job()
+    private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("auth")
 
     companion object {
         const val EXTRA_TOKEN = "extra_token"
@@ -31,8 +41,32 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
+        authPreferencesDataStore = AuthPreferencesDataStore(dataStore)
+
+        val repository = AuthRepository(
+            ApiConfig().getApiService(),
+            authPreferencesDataStore
+        )
+        val viewModelFactory = LoginViewModelFactory(repository)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
+
+        checkLogin()
+
         redirect()
 
+    }
+
+    private fun checkLogin() {
+        lifecycleScope.launch {
+            authPreferencesDataStore.getToken().collect{
+                if (it != null){
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    }
+            }
+        }
     }
 
     private fun redirect() {

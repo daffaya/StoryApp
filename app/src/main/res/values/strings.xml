@@ -38,4 +38,5 @@
     <string name="desc_cannot_empty">Description Cannot be Empty</string>
     <string name="story_uploaded">Story Uploaded</string>
     <string name="story_failed_uploaded">Story Failed Uploaded</string>
+    <string name="date">Date</string>
 </resources>

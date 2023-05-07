@@ -10,7 +10,7 @@ class SettingViewModel constructor(
     ): ViewModel() {
     fun saveAuthToken(token: String) {
         viewModelScope.launch {
-            authRepository.saveAuthToken(token)
+            authRepository.clearToken(token)
         }
     }
 }
