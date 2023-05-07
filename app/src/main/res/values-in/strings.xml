@@ -21,4 +21,15 @@
     <string name="login_success_msg">Berhasil Login</string>
     <string name="register_success_msg">Berhasil Mendaftar</string>
     <string name="registrater_error_msg">Gagal Mendaftar</string>
+    <string name="select_from">Select Image From</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="description">Tambahkan Deskripsi</string>
+    <string name="preview_picture">Preview Foto</string>
+    <string name="upload">Unggah</string>
+    <string name="no_permission">Gagal Mendapatkan Permission</string>
+    <string name="please_choose_image">Silakan Pilih Gambar Terlebih Dahulu</string>
+    <string name="desc_cannot_empty">Deskripsi tidak boleh kosong</string>
+    <string name="story_uploaded">Story Berhasil Diunggah</string>
+    <string name="story_failed_uploaded">Story Gagal Diunggah</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.example.storyapp.data.response
 
-data class GeneralResponse(
+data class FileUploadResponse(
     val error: Boolean,
     val message: String
 )

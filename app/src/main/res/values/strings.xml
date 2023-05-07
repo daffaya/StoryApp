@@ -27,4 +27,15 @@
     <string name="login_success_msg">Login Success</string>
     <string name="register_success_msg">Registration Success</string>
     <string name="registrater_error_msg">Registration Failed</string>
+    <string name="select_from">Select Image From</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="description">Write a Description</string>
+    <string name="preview_picture">Preview Picture</string>
+    <string name="upload">Upload</string>
+    <string name="no_permission">Did not get permission</string>
+    <string name="please_choose_image">Please Choose an Image</string>
+    <string name="desc_cannot_empty">Description Cannot be Empty</string>
+    <string name="story_uploaded">Story Uploaded</string>
+    <string name="story_failed_uploaded">Story Failed Uploaded</string>
 </resources>
