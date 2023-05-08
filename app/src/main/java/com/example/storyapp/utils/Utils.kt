@@ -8,8 +8,17 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.example.storyapp.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -40,6 +49,14 @@ fun createFile(application: Application): File {
     return File(outputDirectory, "$timeStamp.jpg")
 }
 
+fun ImageView.setImageFromUrl(context: Context, url: String) {
+    Glide
+        .with(context)
+        .load(url)
+        .placeholder(R.drawable.ic_image_24)
+        .error(R.drawable.ic_broken_image_24)
+        .into(this)
+}
 fun TextView.dateFormat(timestamp: String) {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
     val date = sdf.parse(timestamp) as Date
@@ -92,4 +109,16 @@ fun reduceFileImage(file: File): File {
     bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
 
     return file
+}
+
+inline fun <T> Flow<T>.launchAndCollectIn(
+    owner: LifecycleOwner,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    crossinline action: suspend CoroutineScope.(T) -> Unit
+) = owner.lifecycleScope.launch {
+    owner.repeatOnLifecycle(minActiveState) {
+        collect {
+            action(it)
+        }
+    }
 }
