@@ -4,6 +4,7 @@ import com.example.storyapp.data.Story
 import com.example.storyapp.data.response.FileUploadResponse
 import com.example.storyapp.data.response.StoriesResponse
 import com.example.storyapp.data.response.StoryResponseItem
+import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.data.retrofit.ApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,9 +13,13 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import kotlin.collections.map
 
-abstract class StoryRepository constructor(
+class StoryRepository constructor(
     private val apiService: ApiService
 ) {
+
+    private var client: ApiService = ApiConfig().getApiService()
+
+    suspend fun getStory(token: String) = client.getAllStories(token)
     suspend fun uploadImage(
         token: String,
         file: MultipartBody.Part,
@@ -32,7 +37,7 @@ abstract class StoryRepository constructor(
         }
     }
 
-    abstract fun getStories(): Flow<StoriesResponse>
+//    abstract fun getStories(): Flow<StoriesResponse>
 
     suspend fun getAllStories(token: String, response: Response<StoriesResponse>): List<Story> {
         return try {
@@ -61,8 +66,6 @@ abstract class StoryRepository constructor(
             emptyList()
         }
     }
-
-
 
 
 

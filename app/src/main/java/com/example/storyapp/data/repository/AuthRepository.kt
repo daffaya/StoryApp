@@ -50,4 +50,5 @@ class AuthRepository constructor(
     }
 
     fun getAuthToken(): Flow<String?> = preferencesDataStore.getToken()
+
 }
