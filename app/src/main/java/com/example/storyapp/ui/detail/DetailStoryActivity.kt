@@ -11,6 +11,7 @@ import com.example.storyapp.data.Story
 import com.example.storyapp.databinding.ActivityDetailStoryBinding
 import com.example.storyapp.utils.dateFormat
 import javax.sql.DataSource
+import com.bumptech.glide.request.target.Target
 
 @Suppress("DEPRECATION")
 class DetailStoryActivity : AppCompatActivity() {
@@ -26,45 +27,44 @@ class DetailStoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val story = intent.getParcelableExtra<Story>(EXTRA_DETAIL)
-        parseStoryData(story)
+        getStoryData(story)
     }
 
-    private fun parseStoryData(story: Story?) {
+    private fun getStoryData(story: Story?) {
         if (story != null) {
             binding.apply {
                 tvStoryUsername.text = story.name
                 tvStoryDescription.text = story.description
                 tvStoryDate.dateFormat(story.createdAt)
 
-//                Glide
-//                    .with(this@DetailStoryActivity)
-//                    .load(story.photoUrl)
-//                    .listener(object : RequestListener<Drawable> {
-//                        override fun onLoadFailed(
-//                            e: GlideException?,
-//                            model: Any?,
-//                            target: Target<Drawable>?,
-//                            isFirstResource: Boolean
-//                        ): Boolean {
-//                            // Continue enter animation after image loaded
-//                            supportStartPostponedEnterTransition()
-//                            return false
-//                        }
-//
-//                        override fun onResourceReady(
-//                            resource: Drawable?,
-//                            model: Any?,
-//                            target: Target<Drawable>?,
-//                            dataSource: DataSource?,
-//                            isFirstResource: Boolean
-//                        ): Boolean {
-//                            supportStartPostponedEnterTransition()
-//                            return false
-//                        }
-//                    })
-//                    .placeholder(R.drawable.image_loading_placeholder)
-//                    .error(R.drawable.image_load_error)
-//                    .into(ivStoryImage)
+                Glide
+                    .with(this@DetailStoryActivity)
+                    .load(story.photoUrl)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: com.bumptech.glide.load.DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
+                        }
+
+                    })
+                    .placeholder(R.drawable.ic_image_24)
+                    .error(R.drawable.ic_broken_image_24)
+                    .into(ivStoryPhoto)
+
             }
         }
     }
