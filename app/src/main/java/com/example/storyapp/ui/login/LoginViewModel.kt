@@ -9,10 +9,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.storyapp.data.repository.AuthRepository
 import com.example.storyapp.data.response.LoginResponse
 import com.example.storyapp.data.retrofit.ApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel constructor(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 

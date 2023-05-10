@@ -2,11 +2,12 @@ package com.example.storyapp.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.storyapp.data.Story
+import com.example.storyapp.data.response.StoryResponseItem
 
 class DiffUtilCallback(
-    private val old: List<Story>,
-    private val new: List<Story>,
-    private val listener: DiffCallbackListener<Story>
+    private val old: List<StoryResponseItem>,
+    private val new: List<StoryResponseItem>,
+    private val listener: DiffCallbackListener<StoryResponseItem>
 ) : DiffUtil.Callback() {
     override fun getOldListSize() = old.size
 

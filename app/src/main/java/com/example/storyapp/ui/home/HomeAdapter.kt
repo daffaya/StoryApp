@@ -11,18 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.example.storyapp.data.Story
+import com.example.storyapp.data.response.StoryResponseItem
 import com.example.storyapp.databinding.ItemStoryBinding
 import com.example.storyapp.ui.detail.DetailStoryActivity
 import com.example.storyapp.utils.DiffCallbackListener
 import com.example.storyapp.utils.DiffUtilCallback
 
 class HomeAdapter(
-    private val storyList: List<Story>,
-    private val diffUtilCallbackListener: DiffCallbackListener<Story>
+    private val diffUtilCallbackListener: DiffCallbackListener<StoryResponseItem>
 ) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
-    private var _items = mutableListOf<Story>()
+    private var _items = mutableListOf<StoryResponseItem>()
 
-    fun setItems(items: List<Story>) {
+    fun setItems(items: List<StoryResponseItem>) {
         val diffResult = DiffUtil.calculateDiff(DiffUtilCallback(_items, items.toMutableList(), diffUtilCallbackListener))
         _items = items.toMutableList()
         diffResult.dispatchUpdatesTo(this)
@@ -46,7 +46,7 @@ class HomeAdapter(
             }
         }
 
-        fun bind(item: Story) {
+        fun bind(item: StoryResponseItem) {
             binding.tvItemName.text = item.name
             binding.tvItemDesc.text = item.description
             Glide.with(binding.root.context).load(item.photoUrl).into(binding.ivItemPhoto)
@@ -60,11 +60,11 @@ class HomeAdapter(
     }
 
     override fun getItemCount(): Int {
-        return storyList.size
+        return _items.size
     }
 
-    private fun getItem(position: Int): Story {
-        return storyList[position]
+    private fun getItem(position: Int): StoryResponseItem {
+        return _items[position]
     }
 
 

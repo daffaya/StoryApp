@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -20,17 +21,21 @@ import com.example.storyapp.databinding.ActivityLoginBinding
 import com.example.storyapp.ui.register.RegisterActivity
 import com.example.storyapp.utils.animateVisibility
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @Suppress("DEPRECATION")
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels()
     private var loginJob: Job = Job()
-    private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
+
+    @Inject
+    lateinit var authPreferencesDataStore: AuthPreferencesDataStore
 
     companion object {
         const val EXTRA_TOKEN = "extra_token"
@@ -42,16 +47,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        authPreferencesDataStore = AuthPreferencesDataStore(dataStore)
-
-        val repository = AuthRepository(
-            ApiConfig().getApiService(),
-            authPreferencesDataStore
-        )
-        val viewModelFactory = LoginViewModelFactory(repository)
-
-        viewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
-
         checkLogin()
 
         redirect()
@@ -60,12 +55,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkLogin() {
         lifecycleScope.launch {
-            authPreferencesDataStore.getToken().collect{
-                if (it != null){
+            authPreferencesDataStore.getToken().collect {
+                if (it != null) {
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                    }
+                }
             }
         }
     }
@@ -111,16 +106,14 @@ class LoginActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                    }.onFailure {
+                        Snackbar.make(
+                            binding.root,
+                            getString(R.string.login_error_msg),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
 
-                        result.onFailure {
-                            Snackbar.make(
-                                binding.root,
-                                getString(R.string.login_error_msg),
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-
-                            showLoading(false)
-                        }
+                        showLoading(false)
                     }
                 }
             }

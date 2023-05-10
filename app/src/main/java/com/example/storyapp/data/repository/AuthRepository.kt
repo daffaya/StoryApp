@@ -2,27 +2,37 @@ package com.example.storyapp.data.repository
 
 import com.example.storyapp.data.response.LoginResponse
 import com.example.storyapp.data.retrofit.ApiService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
-class AuthRepository constructor(
+class AuthRepository @Inject constructor(
     private val apiService: ApiService,
     private val preferencesDataStore: AuthPreferencesDataStore
-){
+) {
     suspend fun login(email: String, password: String): Flow<Result<LoginResponse>> = flow {
         try {
             val response = apiService.login(email, password)
-            val loginResponse = response.body()
-            if (response.isSuccessful && loginResponse != null) {
-                emit(Result.success(loginResponse))
+
+            if (response.code() == 200) {
+                response.body()?.let {
+                    emit(Result.success<LoginResponse>(it))
+                }
             } else {
-                emit(Result.failure(Exception("Login failed")))
+                val errorBody = Gson().fromJson(
+                    response.errorBody()?.charStream(),
+                    LoginResponse::class.java
+                )
+
+                emit(Result.failure<LoginResponse>(Throwable(errorBody.message)))
             }
+
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(Result.failure(e))
+            emit(Result.failure<LoginResponse>(e))
         }
     }.flowOn(Dispatchers.IO)
 
@@ -45,7 +55,7 @@ class AuthRepository constructor(
         preferencesDataStore.saveToken(token)
     }
 
-    suspend fun clearToken(token: String){
+    suspend fun clearToken(token: String) {
         preferencesDataStore.clearToken(token)
     }
 

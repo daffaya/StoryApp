@@ -1,40 +1,59 @@
 package com.example.storyapp.ui.home
 
-import android.util.Log
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.example.storyapp.MainActivity
+import androidx.lifecycle.viewModelScope
+import com.example.storyapp.data.repository.AuthPreferencesDataStore
 import com.example.storyapp.data.repository.StoryRepository
 import com.example.storyapp.data.response.StoriesResponse
-import com.example.storyapp.data.retrofit.ApiConfig
+import com.example.storyapp.data.response.StoryResponseItem
 import com.example.storyapp.data.retrofit.ApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel(dataStore: DataStore<Preferences>, apiService: ApiService): ViewModel() {
-    private val _storyList = MutableLiveData<StoriesResponse>()
-    val detailUser: LiveData<StoriesResponse> = _storyList
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val authPreferencesDataStore: AuthPreferencesDataStore,
+    private val apiService: ApiService,
+) : ViewModel() {
+    private val _storyList = MutableStateFlow<List<StoryResponseItem>>(emptyList())
+    val storyList: StateFlow<List<StoryResponseItem>> = _storyList
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
-    private var token: String = MainActivity.EXTRA_TOKEN
 
-    companion object{
+    companion object {
         const val TAG = "HomeViewModel"
     }
 
     val repository: StoryRepository = StoryRepository(apiService)
 
-    val getStory1 = liveData(Dispatchers.IO) {
-        val retrivedTodo = repository.getStory(token)
+    fun getStories() {
+        viewModelScope.launch {
+            authPreferencesDataStore.getToken().collect { token ->
+                token?.let {
+                    val retrievedTodo = repository.getStory("Bearer $it")
 
-        emit(retrivedTodo)
+                    _storyList.value = retrievedTodo.storyResponseItems
+                }
+            }
+        }
+    }
+
+    val getStory1 = liveData(Dispatchers.IO) {
+        authPreferencesDataStore.getToken().collect { token ->
+            token?.let {
+                val retrievedTodo = repository.getStory(it)
+                emit(retrievedTodo)
+            }
+        }
+
     }
 //    suspend fun listStory(token: String) {
 //        _isLoading.value = true
