@@ -18,6 +18,7 @@ import com.example.storyapp.data.repository.AuthRepository
 import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.databinding.ActivityLoginBinding
 import com.example.storyapp.ui.register.RegisterActivity
+import com.example.storyapp.utils.animateVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
     private var loginJob: Job = Job()
     private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("auth")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
     companion object {
         const val EXTRA_TOKEN = "extra_token"
@@ -132,11 +133,10 @@ class LoginActivity : AppCompatActivity() {
             edLoginPassword.isEnabled = !isLoading
             btnLogin.isEnabled = !isLoading
 
-            // Animate views alpha
             if (isLoading) {
-                rvLoading.visibility = View.VISIBLE
+                rvLoading.animateVisibility(true)
             } else {
-                rvLoading.visibility = View.GONE
+                rvLoading.animateVisibility(false)
             }
         }
     }

@@ -87,7 +87,7 @@
         android:id="@+id/rv_loading"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
+        android:alpha="0"
         android:background="@color/transparent_purple"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

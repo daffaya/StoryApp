@@ -1,5 +1,6 @@
 package com.example.storyapp.utils
 
+import android.animation.ObjectAnimator
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
@@ -111,6 +113,12 @@ fun reduceFileImage(file: File): File {
     return file
 }
 
+fun View.animateVisibility(isVisible: Boolean, duration: Long = 400) {
+    ObjectAnimator
+        .ofFloat(this, View.ALPHA, if (isVisible) 1f else 0f)
+        .setDuration(duration)
+        .start()
+}
 inline fun <T> Flow<T>.launchAndCollectIn(
     owner: LifecycleOwner,
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,

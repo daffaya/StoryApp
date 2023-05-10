@@ -2,6 +2,7 @@ package com.example.storyapp.ui.story
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -15,8 +16,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.storyapp.R
+import com.example.storyapp.data.repository.AuthRepository
+import com.example.storyapp.data.repository.StoryRepository
 import com.example.storyapp.databinding.ActivityAddStoryBinding
 import com.example.storyapp.utils.createCustomTempFile
 import com.example.storyapp.utils.reduceFileImage
@@ -28,6 +35,10 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import com.example.storyapp.data.retrofit.ApiService
+import com.example.storyapp.data.repository.AuthPreferencesDataStore
+import com.example.storyapp.data.retrofit.ApiConfig
+
 
 @Suppress("DEPRECATION")
 class AddStoryActivity : AppCompatActivity() {
@@ -37,7 +48,9 @@ class AddStoryActivity : AppCompatActivity() {
     private var getFile: File? = null
     private lateinit var currentPhotoPath: String
     private var token: String = ""
-
+    private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
+    private lateinit var apiService: ApiService
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
@@ -48,12 +61,30 @@ class AddStoryActivity : AppCompatActivity() {
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        authPreferencesDataStore = AuthPreferencesDataStore(dataStore)
+        apiService = ApiConfig().getApiService()
+
+
+        val authRepository = AuthRepository(apiService, authPreferencesDataStore)
+        val storyRepository = StoryRepository(apiService)
+
+        val viewModelFactory = AddStoryViewModelFactory(authRepository, storyRepository)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AddStoryViewModel::class.java)
+
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                 this,
                 REQUIRED_PERMISSIONS,
                 REQUEST_CODE_PERMISSIONS
             )
+        }
+
+        lifecycleScope.launchWhenCreated {
+            launch {
+                viewModel.getAuthToken().collect { authToken ->
+                    if (!authToken.isNullOrEmpty()) token = authToken
+                }
+            }
         }
 
         binding.btnGallery.setOnClickListener { startGallery() }
@@ -104,9 +135,7 @@ class AddStoryActivity : AppCompatActivity() {
 
         createCustomTempFile(application).also {
             val photoURI: Uri = FileProvider.getUriForFile(
-                this@AddStoryActivity,
-                "com.example.storyapp",
-                it
+                this@AddStoryActivity, packageName, it
             )
             currentPhotoPath = it.absolutePath
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
@@ -142,13 +171,11 @@ class AddStoryActivity : AppCompatActivity() {
         val etDescription = binding.etDescription
         var isValid = true
 
-        // Validation for the description edit text
         if (etDescription.text.toString().isBlank()) {
             etDescription.error = getString(R.string.desc_cannot_empty)
             isValid = false
         }
 
-        // Validation for the image
         if (getFile == null) {
             Toast.makeText(
                 this,

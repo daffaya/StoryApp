@@ -2,9 +2,6 @@ package com.example.storyapp.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Parcelize
 data class Story(
