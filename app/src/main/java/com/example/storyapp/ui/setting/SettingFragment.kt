@@ -11,6 +11,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.storyapp.R
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
@@ -22,31 +23,20 @@ import com.example.storyapp.ui.login.LoginActivity
 import com.example.storyapp.ui.login.LoginViewModel
 import com.example.storyapp.ui.login.LoginViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
-
+@AndroidEntryPoint
 @Suppress("UNREACHABLE_CODE")
 class SettingFragment : Fragment() {
 
     private lateinit var binding: FragmentSettingBinding
-    private lateinit var settingViewModel: SettingViewModel
-    private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("auth")
+    private val settingViewModel: SettingViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        authPreferencesDataStore = AuthPreferencesDataStore(requireContext().dataStore)
-
-        val repository = AuthRepository(
-            ApiConfig().getApiService(),
-            authPreferencesDataStore
-        )
-        val viewModelFactory = SettingViewModelFactory(repository)
-
-        settingViewModel = ViewModelProvider(this, viewModelFactory)[SettingViewModel::class.java]
         binding = FragmentSettingBinding.inflate(inflater, container, false)
         return binding.root
     }

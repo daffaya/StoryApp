@@ -127,9 +127,9 @@ class LoginActivity : AppCompatActivity() {
             btnLogin.isEnabled = !isLoading
 
             if (isLoading) {
-                rvLoading.animateVisibility(true)
+                progressBar.animateVisibility(true)
             } else {
-                rvLoading.animateVisibility(false)
+                progressBar.animateVisibility(false)
             }
         }
     }

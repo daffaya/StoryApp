@@ -12,6 +12,8 @@ import com.example.storyapp.databinding.ActivityDetailStoryBinding
 import com.example.storyapp.utils.dateFormat
 import javax.sql.DataSource
 import com.bumptech.glide.request.target.Target
+import com.example.storyapp.data.response.StoriesResponse
+import com.example.storyapp.data.response.StoryResponseItem
 
 @Suppress("DEPRECATION")
 class DetailStoryActivity : AppCompatActivity() {
@@ -21,16 +23,17 @@ class DetailStoryActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_DETAIL = "extra_detail"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityDetailStoryBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        binding = ActivityDetailStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val story = intent.getParcelableExtra<Story>(EXTRA_DETAIL)
-        getStoryData(story)
+        val story = intent.getParcelableExtra<StoryResponseItem>(EXTRA_DETAIL)
+        getStoryDetail(story)
     }
 
-    private fun getStoryData(story: Story?) {
+    private fun getStoryDetail(story: StoryResponseItem?) {
         if (story != null) {
             binding.apply {
                 tvStoryUsername.text = story.name
@@ -64,9 +67,7 @@ class DetailStoryActivity : AppCompatActivity() {
                     .placeholder(R.drawable.ic_image_24)
                     .error(R.drawable.ic_broken_image_24)
                     .into(ivStoryPhoto)
-
             }
         }
     }
-
 }

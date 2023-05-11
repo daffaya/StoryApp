@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -38,19 +39,22 @@ import java.io.File
 import com.example.storyapp.data.retrofit.ApiService
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
 import com.example.storyapp.data.retrofit.ApiConfig
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @Suppress("DEPRECATION")
+@AndroidEntryPoint
 class AddStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddStoryBinding
-    private lateinit var viewModel: AddStoryViewModel
+    private val viewModel: AddStoryViewModel by viewModels()
     private var getFile: File? = null
     private lateinit var currentPhotoPath: String
     private var token: String = ""
-    private lateinit var authPreferencesDataStore: AuthPreferencesDataStore
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
-    private lateinit var apiService: ApiService
+
+    @Inject
+    lateinit var authPreferencesDataStore: AuthPreferencesDataStore
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
@@ -60,16 +64,6 @@ class AddStoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        authPreferencesDataStore = AuthPreferencesDataStore(dataStore)
-        apiService = ApiConfig().getApiService()
-
-
-        val authRepository = AuthRepository(apiService, authPreferencesDataStore)
-        val storyRepository = StoryRepository(apiService)
-
-        val viewModelFactory = AddStoryViewModelFactory(authRepository, storyRepository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(AddStoryViewModel::class.java)
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -135,7 +129,9 @@ class AddStoryActivity : AppCompatActivity() {
 
         createCustomTempFile(application).also {
             val photoURI: Uri = FileProvider.getUriForFile(
-                this@AddStoryActivity, packageName, it
+                this@AddStoryActivity,
+                "com.kumaa.storyapp",
+                it
             )
             currentPhotoPath = it.absolutePath
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
@@ -232,9 +228,9 @@ class AddStoryActivity : AppCompatActivity() {
             etDescription.isEnabled = !isLoading
 
             if (isLoading) {
-                rvLoading.visibility = View.VISIBLE
+                progressBar.visibility = View.VISIBLE
             } else {
-                rvLoading.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
         }
     }

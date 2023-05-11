@@ -49,6 +49,7 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(LayoutInflater.from(requireActivity()))
 
+        swipeRefresh()
         showListStory()
 
         return binding.root
@@ -70,40 +71,16 @@ class HomeFragment : Fragment() {
 
         binding.rvStory.adapter = homeAdapter
 
-//        val apiConfig = ApiConfig()
-//        val apiService = apiConfig.getApiService()
-
-//        val storyRepository = ConcreteStoryRepository(apiService)
-//        val homeGetStory = HomeGetStory(storyRepository)
-//        homeViewModel = HomeFragmentViewModel(homeGetStory, storyRepository)
-//
-//        homeViewModel = HomeFragmentViewModel(
-//            HomeGetStory(storyRepository),
-//            ConcreteStoryRepository(apiService) // Provide the necessary implementation for StoryRepository
-//        )
-//
-//        homeViewModel.storyResult.launchAndCollectIn(this) {
-//            when (it.resultStories) {
-//                is ResultState.Success -> {
-//                    binding.rvLoading.visibility = View.GONE
-//                    it.resultStories.data?.let { stories ->
-//                        homeAdapter.setItems(stories) // Call setItems on the adapter instance
-//                    }
-//                }
-//                is ResultState.Error -> {
-//                    binding.rvLoading.visibility = View.GONE
-//                }
-//                is ResultState.Loading -> {
-//                    binding.rvLoading.visibility = View.VISIBLE
-//                }
-//                else -> Unit
-//            }
-//        }
-
         binding.fabAddStory.setOnClickListener {
             Intent(requireContext(), AddStoryActivity::class.java).also { intent ->
                 startActivity(intent)
             }
+        }
+    }
+
+    private fun swipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            showListStory()
         }
     }
 }

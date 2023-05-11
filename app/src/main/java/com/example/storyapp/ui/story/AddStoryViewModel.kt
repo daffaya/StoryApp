@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import com.example.storyapp.data.repository.AuthRepository
 import com.example.storyapp.data.repository.StoryRepository
 import com.example.storyapp.data.response.FileUploadResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import javax.inject.Inject
 
-class AddStoryViewModel constructor(
+@HiltViewModel
+class AddStoryViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val storyRepository: StoryRepository
 ): ViewModel() {

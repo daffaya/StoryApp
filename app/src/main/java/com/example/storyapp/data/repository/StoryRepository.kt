@@ -11,9 +11,10 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import javax.inject.Inject
 import kotlin.collections.map
 
-class StoryRepository constructor(
+class StoryRepository @Inject constructor(
     private val apiService: ApiService
 ) {
 
@@ -34,36 +35,6 @@ class StoryRepository constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             emit(Result.failure(e))
-        }
-    }
-
-//    abstract fun getStories(): Flow<StoriesResponse>
-
-    suspend fun getAllStories(token: String, response: Response<StoriesResponse>): List<Story> {
-        return try {
-            if (response.isSuccessful) {
-                val storiesResponse = response.body()
-                val storyResponseItems: List<StoryResponseItem> = storiesResponse?.storyResponseItems ?: emptyList()
-
-                // Convert StoryResponseItem to Story
-                val stories = storyResponseItems.map { storyResponseItem: StoryResponseItem ->
-                    Story(
-                        id = storyResponseItem.id,
-                        name = storyResponseItem.name,
-                        description = storyResponseItem.description,
-                        createdAt = storyResponseItem.createdAt,
-                        photoUrl = storyResponseItem.photoUrl
-                    )
-                }
-
-                stories
-            } else {
-                // Handle error response
-                emptyList()
-            }
-        } catch (e: Exception) {
-            // Handle network error
-            emptyList()
         }
     }
 

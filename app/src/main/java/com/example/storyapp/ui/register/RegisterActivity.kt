@@ -27,36 +27,6 @@ class RegisterActivity : AppCompatActivity() {
 
         redirect()
     }
-//        viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
-//        lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.registerState.collect { resultState ->
-//                    when (resultState) {
-//                        is ResultState.Error -> {
-//                            Snackbar.make(
-//                                binding.root,
-//                                resultState.message,
-//                                Snackbar.LENGTH_LONG
-//                            ).show()
-//                        }
-//                        is ResultState.Idle -> {
-//                            // do nothing, just stay idle
-//                        }
-//                        is ResultState.Loading -> {
-//                            binding.rvLoading.visibility = View.VISIBLE
-//                        }
-//                        is ResultState.Success -> {
-//                            binding.rvLoading.visibility = View.GONE
-//                            val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-//                            startActivity(intent)
-//                            finish()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
-//
 
     private fun redirect() {
         binding.apply {
@@ -115,9 +85,9 @@ class RegisterActivity : AppCompatActivity() {
             btnRegister.isEnabled = !isLoading
 
             if (isLoading) {
-                rvLoading.visibility = View.VISIBLE
+                progressBar.visibility = View.VISIBLE
             } else {
-                rvLoading.visibility = View.GONE
+                progressBar.visibility = View.GONE
             }
         }
     }

@@ -25,12 +25,6 @@ class HomeViewModel @Inject constructor(
     private val _storyList = MutableStateFlow<List<StoryResponseItem>>(emptyList())
     val storyList: StateFlow<List<StoryResponseItem>> = _storyList
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
-
-    companion object {
-        const val TAG = "HomeViewModel"
-    }
 
     val repository: StoryRepository = StoryRepository(apiService)
 
@@ -38,43 +32,12 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             authPreferencesDataStore.getToken().collect { token ->
                 token?.let {
-                    val retrievedTodo = repository.getStory("Bearer $it")
+                    val retrieveStory = repository.getStory("Bearer $it")
 
-                    _storyList.value = retrievedTodo.storyResponseItems
+                    _storyList.value = retrieveStory.storyResponseItems
                 }
             }
         }
     }
 
-    val getStory1 = liveData(Dispatchers.IO) {
-        authPreferencesDataStore.getToken().collect { token ->
-            token?.let {
-                val retrievedTodo = repository.getStory(it)
-                emit(retrievedTodo)
-            }
-        }
-
-    }
-//    suspend fun listStory(token: String) {
-//        _isLoading.value = true
-//        val client = ApiConfig.getApiService().getAllStories(token)
-//        client.enqueue(object : Callback<StoriesResponse> {
-//            override fun onResponse(
-//                call: Call<StoriesResponse>,
-//                response: Response<StoriesResponse>
-//            ) {
-//                _isLoading.value = false
-//                if (response.isSuccessful) {
-//                    _storyList.value = response.body()
-//                } else {
-//                    Log.e(TAG, "onFailure: ${response.message()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<StoriesResponse>, t: Throwable) {
-//                _isLoading.value = false
-//                Log.e(TAG, "onFailure: ${t.message.toString()}")
-//            }
-//        })
-//    }
 }
