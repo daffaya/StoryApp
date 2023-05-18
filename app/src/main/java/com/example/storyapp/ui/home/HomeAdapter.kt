@@ -8,9 +8,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
-import com.example.storyapp.data.Story
 import com.example.storyapp.data.response.StoryResponseItem
 import com.example.storyapp.databinding.ItemStoryBinding
 import com.example.storyapp.ui.detail.DetailStoryActivity
@@ -23,13 +21,22 @@ class HomeAdapter(
     private var _items = mutableListOf<StoryResponseItem>()
 
     fun setItems(items: List<StoryResponseItem>) {
-        val diffResult = DiffUtil.calculateDiff(DiffUtilCallback(_items, items.toMutableList(), diffUtilCallbackListener))
-        _items = items.toMutableList()
+        val diffResult = DiffUtil.calculateDiff(
+            DiffUtilCallback(_items, items.toMutableList(), diffUtilCallbackListener)
+        )
+        _items.clear()
+        _items.addAll(items)
         diffResult.dispatchUpdatesTo(this)
     }
 
     inner class ViewHolder(private val binding: ItemStoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        init {
+
+
+        fun bind(item: StoryResponseItem) {
+            binding.tvItemName.text = item.name
+            binding.tvItemDesc.text = item.description
+            Glide.with(binding.root.context).load(item.photoUrl).into(binding.ivItemPhoto)
+
             binding.root.setOnClickListener {
                 val optionsCompat: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     binding.root.context as Activity,
@@ -40,16 +47,11 @@ class HomeAdapter(
 
                 binding.root.context.startActivity(
                     Intent(binding.root.context, DetailStoryActivity::class.java)
-                        .putExtra(DetailStoryActivity.EXTRA_DETAIL, itemId),
+                        .putExtra(DetailStoryActivity.EXTRA_DETAIL, item),
                     optionsCompat.toBundle()
                 )
             }
-        }
 
-        fun bind(item: StoryResponseItem) {
-            binding.tvItemName.text = item.name
-            binding.tvItemDesc.text = item.description
-            Glide.with(binding.root.context).load(item.photoUrl).into(binding.ivItemPhoto)
         }
     }
 
@@ -72,5 +74,6 @@ class HomeAdapter(
         val item = getItem(position)
         holder.bind(item)
     }
+
 }
 

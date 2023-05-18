@@ -1,22 +1,15 @@
 package com.example.storyapp.ui.login
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.storyapp.MainActivity
 import com.example.storyapp.R
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
-import com.example.storyapp.data.repository.AuthRepository
-import com.example.storyapp.data.retrofit.ApiConfig
 import com.example.storyapp.databinding.ActivityLoginBinding
 import com.example.storyapp.ui.register.RegisterActivity
 import com.example.storyapp.utils.animateVisibility
@@ -81,6 +74,14 @@ class LoginActivity : AppCompatActivity() {
     private fun handleLogin() {
         val email = binding.edLoginEmail.text.toString().trim()
         val password = binding.edLoginPassword.text.toString()
+
+        val isEmailValid = binding.edLoginEmail.isEmailValid()
+        if (!isEmailValid || password.length < 8) {
+            binding.edLoginEmail.error = "Invalid email format"
+            binding.edLoginPassword.error = "Password must be at least 8 characters long"
+            return
+        }
+
         showLoading(true)
 
         lifecycleScope.launchWhenResumed {
@@ -120,17 +121,19 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun showLoading(isLoading: Boolean) {
+
+    private fun showLoading(isLoading: Boolean) {
         binding.apply {
             edLoginEmail.isEnabled = !isLoading
             edLoginPassword.isEnabled = !isLoading
             btnLogin.isEnabled = !isLoading
 
             if (isLoading) {
-                progressBar.animateVisibility(true)
+                progressBar.visibility = View.VISIBLE
             } else {
-                progressBar.animateVisibility(false)
+                progressBar.visibility = View.GONE
             }
         }
     }
+
 }

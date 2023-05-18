@@ -5,19 +5,22 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.storyapp.R
 import com.example.storyapp.databinding.ActivityRegisterBinding
 import com.example.storyapp.ui.login.LoginActivity
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private var registerJob: Job = Job()
-    private lateinit var viewModel: RegisterViewModel
+    private val viewModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,11 +43,18 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun handleRegister() {
         val name = binding.edRegisterName.text.toString().trim()
         val email = binding.edRegisterEmail.text.toString().trim()
         val password = binding.edRegisterPassword.text.toString()
+
+        val isEmailValid = binding.edRegisterEmail.isEmailValid()
+        if (!isEmailValid || password.length < 8) {
+            binding.edRegisterEmail.error = "Invalid email format"
+            binding.edRegisterPassword.error = "Password must be at least 8 characters long"
+            return
+        }
+
         showLoading(true)
 
         lifecycleScope.launchWhenResumed {

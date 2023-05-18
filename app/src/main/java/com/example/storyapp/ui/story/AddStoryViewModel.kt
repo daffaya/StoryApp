@@ -22,4 +22,5 @@ class AddStoryViewModel @Inject constructor(
         description: RequestBody,
     ): Flow<Result<FileUploadResponse>> =
         storyRepository.uploadImage(token, file, description)
+
 }

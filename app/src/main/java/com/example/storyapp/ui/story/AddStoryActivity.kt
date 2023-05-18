@@ -2,7 +2,6 @@ package com.example.storyapp.ui.story
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -17,14 +16,9 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.storyapp.MainActivity
 import com.example.storyapp.R
-import com.example.storyapp.data.repository.AuthRepository
-import com.example.storyapp.data.repository.StoryRepository
 import com.example.storyapp.databinding.ActivityAddStoryBinding
 import com.example.storyapp.utils.createCustomTempFile
 import com.example.storyapp.utils.reduceFileImage
@@ -36,9 +30,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import com.example.storyapp.data.retrofit.ApiService
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
-import com.example.storyapp.data.retrofit.ApiConfig
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -55,6 +47,7 @@ class AddStoryActivity : AppCompatActivity() {
 
     @Inject
     lateinit var authPreferencesDataStore: AuthPreferencesDataStore
+
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
@@ -217,9 +210,9 @@ class AddStoryActivity : AppCompatActivity() {
                         }
                 }
             }
-
         } else showLoading(false)
     }
+
 
     private fun showLoading(isLoading: Boolean) {
         binding.apply {
