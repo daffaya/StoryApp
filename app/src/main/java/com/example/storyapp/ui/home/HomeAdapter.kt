@@ -29,7 +29,8 @@ class HomeAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    inner class ViewHolder(private val binding: ItemStoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ItemStoryBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
 
         fun bind(item: StoryResponseItem) {

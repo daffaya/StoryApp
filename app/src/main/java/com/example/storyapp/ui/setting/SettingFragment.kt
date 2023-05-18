@@ -49,6 +49,7 @@ class SettingFragment : Fragment() {
                 settingViewModel.saveAuthToken("")
                 val intent = Intent(activity, LoginActivity::class.java)
                 startActivity(intent)
+                activity?.finish()
             }
             .show()
     }

@@ -1,5 +1,6 @@
 package com.example.storyapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
@@ -32,4 +33,5 @@ class MainActivity : AppCompatActivity() {
         botNav.setupWithNavController(navController)
 
     }
+
 }

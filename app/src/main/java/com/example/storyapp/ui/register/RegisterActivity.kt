@@ -48,13 +48,6 @@ class RegisterActivity : AppCompatActivity() {
         val email = binding.edRegisterEmail.text.toString().trim()
         val password = binding.edRegisterPassword.text.toString()
 
-        val isEmailValid = binding.edRegisterEmail.isEmailValid()
-        if (!isEmailValid || password.length < 8) {
-            binding.edRegisterEmail.error = "Invalid email format"
-            binding.edRegisterPassword.error = "Password must be at least 8 characters long"
-            return
-        }
-
         showLoading(true)
 
         lifecycleScope.launchWhenResumed {

@@ -28,7 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_hello" />
 
-    <com.example.storyapp.customView.EditText
+    <com.example.storyapp.customView.EmailEditText
         android:id="@+id/ed_login_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         app:layout_constraintVertical_bias="0.3"
         android:autofillHints="@string/email" />
 
-    <com.example.storyapp.customView.EditText
+    <com.example.storyapp.customView.PasswordEditText
         android:id="@+id/ed_login_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

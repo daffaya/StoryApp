@@ -75,13 +75,6 @@ class LoginActivity : AppCompatActivity() {
         val email = binding.edLoginEmail.text.toString().trim()
         val password = binding.edLoginPassword.text.toString()
 
-        val isEmailValid = binding.edLoginEmail.isEmailValid()
-        if (!isEmailValid || password.length < 8) {
-            binding.edLoginEmail.error = "Invalid email format"
-            binding.edLoginPassword.error = "Password must be at least 8 characters long"
-            return
-        }
-
         showLoading(true)
 
         lifecycleScope.launchWhenResumed {
