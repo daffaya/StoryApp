@@ -55,7 +55,7 @@ class PasswordEditText : AppCompatEditText {
             override fun afterTextChanged(p0: Editable?) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!s.isNullOrEmpty() && s.length < 6)
+                if (!s.isNullOrEmpty() && s.length < 8)
                     error = context.getString(R.string.minimum_password_character)
             }
         })
