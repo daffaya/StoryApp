@@ -1,37 +1,33 @@
 package com.example.storyapp.ui.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.storyapp.data.local.Story
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
 import com.example.storyapp.data.repository.StoryRepository
-import com.example.storyapp.data.response.StoryResponseItem
-import com.example.storyapp.data.retrofit.ApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@ExperimentalPagingApi
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val authPreferencesDataStore: AuthPreferencesDataStore,
-    private val apiService: ApiService,
+    private val storyRepository: StoryRepository
 ) : ViewModel() {
-    private val _storyList = MutableStateFlow<List<StoryResponseItem>>(emptyList())
-    val storyList: StateFlow<List<StoryResponseItem>> = _storyList
+    @OptIn(ExperimentalCoroutinesApi::class)
 
-
-    val repository: StoryRepository = StoryRepository(apiService)
-
-    fun getStories() {
-        viewModelScope.launch {
-            authPreferencesDataStore.getToken().collect { token ->
-                token?.let {
-                    val retrieveStory = repository.getStory("Bearer $it")
-                    _storyList.value = retrieveStory.storyResponseItems
-                }
-            }
-        }
-    }
-
+    val storyList: LiveData<PagingData<Story>> = authPreferencesDataStore.getToken()
+        .flatMapLatest { token ->
+            token?.let {
+                storyRepository.getAllStories("Bearer $token")
+                    .cachedIn(viewModelScope)
+            } ?: flowOf(PagingData.empty())
+        }.asLiveData()
 }

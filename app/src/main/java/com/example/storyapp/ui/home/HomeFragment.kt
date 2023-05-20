@@ -1,51 +1,47 @@
 package com.example.storyapp.ui.home
 
-import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.os.bundleOf
-import androidx.core.util.Pair
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.storyapp.data.response.StoryResponseItem
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.storyapp.MainActivity
+import com.example.storyapp.data.local.Story
 import com.example.storyapp.databinding.FragmentHomeBinding
-import com.example.storyapp.ui.detail.DetailStoryActivity
 import com.example.storyapp.ui.story.AddStoryActivity
-import com.example.storyapp.utils.DiffCallbackListener
+import com.example.storyapp.utils.animateVisibility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@ExperimentalPagingApi
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
     private val homeViewModel: HomeViewModel by activityViewModels()
-    private val homeAdapter: HomeAdapter by lazy { HomeAdapter(diffCallbackListener) }
 
-    companion object {
-        private val diffCallbackListener = object : DiffCallbackListener<StoryResponseItem> {
-            override fun areItemsTheSame(
-                oldItem: StoryResponseItem,
-                newItem: StoryResponseItem
-            ): Boolean {
-                return oldItem.id == newItem.id
-            }
-        }
-    }
+    private lateinit var listAdapter: StoryListAdapter
+
+
+
+    private lateinit var recyclerView: RecyclerView
+    private var token: String = ""
+
 
     override fun onResume() {
         super.onResume()
 
-        showListStory()
+        getAllStories()
     }
 
     override fun onCreateView(
@@ -53,35 +49,21 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(LayoutInflater.from(requireActivity()))
-
-        swipeRefresh()
-        showListStory()
-
         return binding.root
     }
-
-    private fun showListStory() {
-        if (binding.rvStory.adapter == null) {
-            binding.rvStory.adapter = homeAdapter
-        }
-
-        homeViewModel.getStories()
-        lifecycleScope.launch {
-            homeViewModel.storyList.collect { storyList ->
-                Log.d(HomeFragment::class.simpleName, "List: $storyList")
-                homeAdapter.setItems(storyList)
-                binding.swipeRefresh.isRefreshing = false
-                binding.rvStory.scrollToPosition(0)
-            }
-        }
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.rvStory.adapter = homeAdapter
+        recyclerView = binding.rvStory
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+
+        token = requireActivity().intent.getStringExtra(MainActivity.EXTRA_TOKEN) ?: ""
+
+        swipeRefresh()
+        setRecyclerView()
+        getAllStories()
 
         binding.fabAddStory.setOnClickListener {
             Intent(requireContext(), AddStoryActivity::class.java).also { intent ->
@@ -91,9 +73,66 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun swipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
-            showListStory()
+    private fun getAllStories() {
+        lifecycleScope.launch {
+            homeViewModel.storyList.observe(viewLifecycleOwner) { pagingData ->
+                updateRecyclerViewData(pagingData)
+            }
         }
     }
+
+    private fun swipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            getAllStories()
+        }
+    }
+
+    private fun setRecyclerView() {
+        val linearLayoutManager = LinearLayoutManager(requireContext())
+        listAdapter = StoryListAdapter()
+
+
+        listAdapter.addLoadStateListener { loadState ->
+            if ((loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && listAdapter.itemCount < 1) || loadState.source.refresh is LoadState.Error) {
+
+                binding?.apply {
+                    tvNotFoundError.animateVisibility(true)
+                    ivNotFoundError.animateVisibility(true)
+                    rvStory.animateVisibility(false)
+                }
+            } else {
+
+                binding?.apply {
+                    tvNotFoundError.animateVisibility(false)
+                    ivNotFoundError.animateVisibility(false)
+                    rvStory.animateVisibility(true)
+                }
+            }
+
+
+            binding?.swipeRefresh?.isRefreshing = loadState.source.refresh is LoadState.Loading
+        }
+
+        try {
+            recyclerView = binding.rvStory
+            recyclerView.apply {
+                adapter = listAdapter.withLoadStateFooter(
+                    footer = LoadingStateAdapter {
+                        listAdapter.retry()
+                    }
+                )
+                layoutManager = linearLayoutManager
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun updateRecyclerViewData(stories: PagingData<Story>) {
+        val recyclerViewState = recyclerView.layoutManager?.onSaveInstanceState()
+        listAdapter.submitData(lifecycle, stories)
+        Log.d(HomeFragment::class.java.simpleName, "Item count: ${listAdapter.itemCount}")
+        recyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
+    }
+
 }

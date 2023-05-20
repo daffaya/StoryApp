@@ -8,7 +8,6 @@ import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface ApiService {
-
     @FormUrlEncoded
     @POST("register")
     suspend fun register(

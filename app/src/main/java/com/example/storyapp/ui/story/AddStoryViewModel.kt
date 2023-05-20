@@ -1,6 +1,7 @@
 package com.example.storyapp.ui.story
 
 import androidx.lifecycle.ViewModel
+import androidx.paging.ExperimentalPagingApi
 import com.example.storyapp.data.repository.AuthRepository
 import com.example.storyapp.data.repository.StoryRepository
 import com.example.storyapp.data.response.FileUploadResponse
@@ -11,6 +12,7 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
+@ExperimentalPagingApi
 class AddStoryViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val storyRepository: StoryRepository
@@ -21,6 +23,6 @@ class AddStoryViewModel @Inject constructor(
         file: MultipartBody.Part,
         description: RequestBody,
     ): Flow<Result<FileUploadResponse>> =
-        storyRepository.uploadImage(token, file, description)
+        storyRepository.uploadStory(token, file, description)
 
 }

@@ -1,14 +1,16 @@
 package com.example.storyapp.data.repository
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import androidx.datastore.preferences.core.Preferences
 import javax.inject.Inject
 
-class AuthPreferencesDataStore constructor(private val dataStore: DataStore<Preferences>) {
+class AuthPreferencesDataStore @Inject constructor(private val dataStore: DataStore<Preferences>) {
+
+    private val TOKEN_KEY = stringPreferencesKey("token_data")
 
     fun getToken(): Flow<String?> {
         return dataStore.data.map { preferences ->
@@ -22,14 +24,10 @@ class AuthPreferencesDataStore constructor(private val dataStore: DataStore<Pref
         }
     }
 
-    suspend fun clearToken(token: String){
+    suspend fun clearToken(token: String) {
         dataStore.edit { preferences ->
-            preferences.clear()
+            preferences.remove(TOKEN_KEY)
         }
     }
-
-    companion object {
-        private val TOKEN_KEY = stringPreferencesKey("token_data")
-    }
-
 }
+

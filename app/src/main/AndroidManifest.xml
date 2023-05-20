@@ -21,6 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StoryApp"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAH9ILZdWGur6fB5f6Mt5zVjBsodtjbceM" />
+
         <activity
             android:name=".ui.detail.DetailStoryActivity"
             android:exported="false" />

@@ -1,6 +1,5 @@
 package com.example.storyapp
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
@@ -26,12 +25,9 @@ class MainActivity : AppCompatActivity() {
 
         val botNav: BottomNavigationView = binding.botNav
 
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_home_nav) as NavHostFragment
         val navController = navHostFragment.navController
         botNav.setupWithNavController(navController)
-
     }
-
 }

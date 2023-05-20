@@ -39,4 +39,8 @@
     <string name="story_uploaded">Story Uploaded</string>
     <string name="story_failed_uploaded">Story Failed Uploaded</string>
     <string name="date">Date</string>
+    <string name="no_data">No Data</string>
+    <string name="stories_not_found_error">Stories not found</string>
+    <string name="retry">Retry</string>
+    <string name="loading_error_message">Unable to fetch stories data</string>
 </resources>

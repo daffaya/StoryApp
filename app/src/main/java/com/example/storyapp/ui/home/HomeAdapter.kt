@@ -6,34 +6,43 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.storyapp.data.response.StoryResponseItem
+import com.example.storyapp.data.local.Story
 import com.example.storyapp.databinding.ItemStoryBinding
 import com.example.storyapp.ui.detail.DetailStoryActivity
-import com.example.storyapp.utils.DiffCallbackListener
-import com.example.storyapp.utils.DiffUtilCallback
 
-class HomeAdapter(
-    private val diffUtilCallbackListener: DiffCallbackListener<StoryResponseItem>
-) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
-    private var _items = mutableListOf<StoryResponseItem>()
+class HomeAdapter : PagingDataAdapter<Story, HomeAdapter.ViewHolder>(DiffCallback)
+{
+    companion object {
+        val DiffCallback = object : DiffUtil.ItemCallback<Story>() {
+            override fun areItemsTheSame(oldItem: Story, newItem: Story): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    fun setItems(items: List<StoryResponseItem>) {
-        val diffResult = DiffUtil.calculateDiff(
-            DiffUtilCallback(_items, items.toMutableList(), diffUtilCallbackListener)
-        )
-        _items.clear()
-        _items.addAll(items)
-        diffResult.dispatchUpdatesTo(this)
+            override fun areContentsTheSame(oldItem: Story, newItem: Story): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemStoryBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = getItem(position)
+        item?.let { holder.bind(it) }
     }
 
     inner class ViewHolder(private val binding: ItemStoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-
-        fun bind(item: StoryResponseItem) {
+        fun bind(item: Story) {
             binding.tvItemName.text = item.name
             binding.tvItemDesc.text = item.description
             Glide.with(binding.root.context).load(item.photoUrl).into(binding.ivItemPhoto)
@@ -52,29 +61,7 @@ class HomeAdapter(
                     optionsCompat.toBundle()
                 )
             }
-
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = ItemStoryBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding)
-    }
-
-    override fun getItemCount(): Int {
-        return _items.size
-    }
-
-    private fun getItem(position: Int): StoryResponseItem {
-        return _items[position]
-    }
-
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
-    }
-
 }
 

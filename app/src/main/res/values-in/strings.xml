@@ -33,4 +33,8 @@
     <string name="story_uploaded">Story Berhasil Diunggah</string>
     <string name="story_failed_uploaded">Story Gagal Diunggah</string>
     <string name="date">Tanggal</string>
+    <string name="no_data">No Data</string>
+    <string name="stories_not_found_error">Stories not found</string>
+    <string name="retry">Retry</string>
+    <string name="loading_error_message">Unable to fetch stories data</string>
 </resources>

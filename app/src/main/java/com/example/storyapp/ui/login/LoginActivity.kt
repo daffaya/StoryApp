@@ -8,11 +8,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.storyapp.MainActivity
+import com.example.storyapp.MainActivity.Companion.EXTRA_TOKEN
 import com.example.storyapp.R
 import com.example.storyapp.data.repository.AuthPreferencesDataStore
 import com.example.storyapp.databinding.ActivityLoginBinding
 import com.example.storyapp.ui.register.RegisterActivity
-import com.example.storyapp.utils.animateVisibility
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -29,10 +29,6 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var authPreferencesDataStore: AuthPreferencesDataStore
-
-    companion object {
-        const val EXTRA_TOKEN = "extra_token"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
