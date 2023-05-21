@@ -2,12 +2,16 @@ package com.example.storyapp.ui.story
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,20 +23,22 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import com.example.storyapp.R
-import com.example.storyapp.data.repository.AuthPreferencesDataStore
 import com.example.storyapp.databinding.ActivityAddStoryBinding
 import com.example.storyapp.utils.createCustomTempFile
 import com.example.storyapp.utils.reduceFileImage
 import com.example.storyapp.utils.uriToFile
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import javax.inject.Inject
 
 
 @Suppress("DEPRECATION")
@@ -45,6 +51,8 @@ class AddStoryActivity : AppCompatActivity() {
     private var getFile: File? = null
     private lateinit var currentPhotoPath: String
     private var token: String = ""
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var location: Location? = null
 
 
     companion object {
@@ -65,6 +73,8 @@ class AddStoryActivity : AppCompatActivity() {
             )
         }
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         lifecycleScope.launchWhenCreated {
             launch {
                 viewModel.getAuthToken().collect { authToken ->
@@ -77,7 +87,13 @@ class AddStoryActivity : AppCompatActivity() {
         binding.btnCamera.setOnClickListener {
             startTakePhoto()
         }
-
+        binding.switchLocation.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                getUserLocation()
+            } else {
+                this.location = null
+            }
+        }
         binding.btnUpload.setOnClickListener {
             uploadStory()
         }
@@ -187,7 +203,17 @@ class AddStoryActivity : AppCompatActivity() {
                         requestImageFile
                     )
 
-                    viewModel.uploadImage(token, imageMultipart, description)
+                    var lat: RequestBody? = null
+                    var lon: RequestBody? = null
+
+                    if (location != null) {
+                        lat =
+                            location?.latitude.toString().toRequestBody("text/plain".toMediaType())
+                        lon =
+                            location?.longitude.toString().toRequestBody("text/plain".toMediaType())
+                    }
+
+                    viewModel.uploadImage(token, imageMultipart, description, lat, lon)
                         .collect { response ->
                             response.onSuccess {
                                 Toast.makeText(
@@ -212,6 +238,66 @@ class AddStoryActivity : AppCompatActivity() {
         } else showLoading(false)
     }
 
+    private fun getUserLocation() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    this.location = location
+                } else {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.please_activate_location_service),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    binding.switchLocation.isChecked = false
+                }
+            }
+        } else {
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        Log.d(TAG, "$permissions")
+        when {
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                getUserLocation()
+            }
+            else -> {
+                Snackbar
+                    .make(
+                        binding.root,
+                        getString(R.string.location_permission_denied),
+                        Snackbar.LENGTH_SHORT
+                    )
+                    .setActionTextColor(getColor(R.color.white))
+                    .setAction(getString(R.string.location_permission_denied_action)) {
+
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).also { intent ->
+                            val uri = Uri.fromParts("package", packageName, null)
+                            intent.data = uri
+
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }
+                    }
+                    .show()
+
+                binding.switchLocation.isChecked = false
+            }
+        }
+    }
 
     private fun showLoading(isLoading: Boolean) {
         binding.apply {

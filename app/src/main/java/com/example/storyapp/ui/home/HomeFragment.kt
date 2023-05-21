@@ -73,14 +73,19 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun showListStory() {
-        lifecycleScope.launch {
-            homeViewModel.storyList.observe(viewLifecycleOwner) { pagingData ->
-                updateRecyclerViewData(pagingData)
-            }
+//    private fun showListStory() {
+//        lifecycleScope.launch {
+//            homeViewModel.storyList.observe(viewLifecycleOwner) { pagingData ->
+//                updateRecyclerViewData(pagingData)
+//            }
+//        }
+//    }
+
+    private fun showListStory(){
+        homeViewModel.getStoryList().observe(viewLifecycleOwner) { pagingData ->
+            updateRecyclerViewData(pagingData)
         }
     }
-
     private fun swipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
             showListStory()

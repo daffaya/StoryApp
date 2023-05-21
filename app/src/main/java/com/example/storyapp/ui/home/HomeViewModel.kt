@@ -22,12 +22,13 @@ class HomeViewModel @Inject constructor(
     private val storyRepository: StoryRepository
 ) : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
-
-    val storyList: LiveData<PagingData<Story>> = authPreferencesDataStore.getToken()
-        .flatMapLatest { token ->
-            token?.let {
-                storyRepository.getAllStories("Bearer $token")
-                    .cachedIn(viewModelScope)
-            } ?: flowOf(PagingData.empty())
-        }.asLiveData()
+    fun getStoryList(): LiveData<PagingData<Story>> {
+        return authPreferencesDataStore.getToken()
+            .flatMapLatest { token ->
+                token?.let {
+                    storyRepository.getAllStories("Bearer $token")
+                        .cachedIn(viewModelScope)
+                } ?: flowOf(PagingData.empty())
+            }.asLiveData()
+    }
 }

@@ -22,7 +22,9 @@ class AddStoryViewModel @Inject constructor(
         token: String,
         file: MultipartBody.Part,
         description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
     ): Flow<Result<FileUploadResponse>> =
-        storyRepository.uploadStory(token, file, description)
+        storyRepository.uploadStory(token, file, description, lat, lon)
 
 }

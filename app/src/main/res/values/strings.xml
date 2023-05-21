@@ -43,4 +43,9 @@
     <string name="stories_not_found_error">Stories not found</string>
     <string name="retry">Retry</string>
     <string name="loading_error_message">Unable to fetch stories data</string>
+    <string name="please_activate_location_service">Please activate your location service</string>
+    <string name="maps" translatable="false">Maps</string>
+    <string name="share_location">Share Location</string>
+    <string name="location_permission_denied">Location permission not allowed</string>
+    <string name="location_permission_denied_action">Change Setting</string>
 </resources>

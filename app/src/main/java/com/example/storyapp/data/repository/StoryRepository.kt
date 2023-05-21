@@ -21,8 +21,6 @@ class StoryRepository @Inject constructor(
     private val storyDatabase: StoryDatabase,
     private val apiService: ApiService,
 ) {
-//    private var client: ApiService = ApiConfig().getApiService()
-//    suspend fun getStory(token: String) = client.getAllStories(token)
     fun getAllStories(token: String): Flow<PagingData<Story>> {
         return Pager(
             config = PagingConfig(
@@ -39,16 +37,18 @@ class StoryRepository @Inject constructor(
         ).flow
     }
     fun getAllStoriesWithLocation(token: String): Flow<Result<StoriesResponse>> = flow {
-            try {
-                val bearerToken = generateBearerToken(token)
-                val response = apiService.getAllStories(bearerToken, size = 30, location = 1)
-                emit(Result.success(response))
-            } catch (e: Exception) {
-                e.printStackTrace()
-                emit(Result.failure(e))
-            }
-
+        try {
+            val bearerToken = generateBearerToken(token)
+            val response = apiService.getAllStories(bearerToken, size = 30, location = 1)
+            emit(Result.success<StoriesResponse>(response))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emit(Result.failure<StoriesResponse>(e))
+        }
     }
+
+
+
 
     suspend fun uploadStory(
         token: String,

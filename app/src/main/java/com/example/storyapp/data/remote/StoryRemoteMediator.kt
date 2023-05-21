@@ -71,7 +71,6 @@ class StoryRemoteMediator(
                         storyResponseItem.lat
                     )
 
-                    // Save Story to the local database
                     database.storyDao().uploadStory(story)
                 }
             }

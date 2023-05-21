@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.storyapp.data.local.Story
 import com.example.storyapp.databinding.ItemStoryBinding
 import com.example.storyapp.ui.detail.DetailStoryActivity
-
+//Not Using this, following the material, changed into StoryListAdapter
 class HomeAdapter : PagingDataAdapter<Story, HomeAdapter.ViewHolder>(DiffCallback)
 {
     companion object {

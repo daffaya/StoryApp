@@ -10,9 +10,6 @@
         android:name="com.example.storyapp.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_setting"
-            app:destination="@id/navigation_setting" />
     </fragment>
 
     <fragment
@@ -20,9 +17,12 @@
         android:name="com.example.storyapp.ui.setting.SettingFragment"
         android:label="@string/setting"
         tools:layout="@layout/fragment_setting" >
-        <action
-            android:id="@+id/action_navigation_setting_to_navigation_home"
-            app:destination="@id/navigation_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_maps"
+        android:name="com.example.storyapp.ui.maps.MapsFragment"
+        android:label="@string/maps"
+        tools:layout="@layout/fragment_maps" >
     </fragment>
 
 </navigation>

@@ -33,8 +33,12 @@
     <string name="story_uploaded">Story Berhasil Diunggah</string>
     <string name="story_failed_uploaded">Story Gagal Diunggah</string>
     <string name="date">Tanggal</string>
-    <string name="no_data">No Data</string>
-    <string name="stories_not_found_error">Stories not found</string>
-    <string name="retry">Retry</string>
-    <string name="loading_error_message">Unable to fetch stories data</string>
+    <string name="no_data">Data kosong</string>
+    <string name="stories_not_found_error">Story tidak ditemukan</string>
+    <string name="retry">Ulangi</string>
+    <string name="loading_error_message">Tidak dapat mengambil data</string>
+    <string name="please_activate_location_service">Tolong aktifkan lokasi anda</string>
+    <string name="share_location">Bagikan Lokasi</string>
+    <string name="location_permission_denied">Izin lokasi ditolak</string>
+    <string name="location_permission_denied_action">Ubah pengaturan</string>
 </resources>
