@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        getAllStories()
+        showListStory()
     }
 
     override fun onCreateView(
@@ -63,7 +63,7 @@ class HomeFragment : Fragment() {
 
         swipeRefresh()
         setRecyclerView()
-        getAllStories()
+        showListStory()
 
         binding.fabAddStory.setOnClickListener {
             Intent(requireContext(), AddStoryActivity::class.java).also { intent ->
@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun getAllStories() {
+    private fun showListStory() {
         lifecycleScope.launch {
             homeViewModel.storyList.observe(viewLifecycleOwner) { pagingData ->
                 updateRecyclerViewData(pagingData)
@@ -83,7 +83,7 @@ class HomeFragment : Fragment() {
 
     private fun swipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            getAllStories()
+            showListStory()
         }
     }
 
