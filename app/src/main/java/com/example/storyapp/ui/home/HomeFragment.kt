@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -20,7 +19,6 @@ import com.example.storyapp.databinding.FragmentHomeBinding
 import com.example.storyapp.ui.story.AddStoryActivity
 import com.example.storyapp.utils.animateVisibility
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @ExperimentalPagingApi
 @AndroidEntryPoint
@@ -100,14 +98,14 @@ class HomeFragment : Fragment() {
         listAdapter.addLoadStateListener { loadState ->
             if ((loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && listAdapter.itemCount < 1) || loadState.source.refresh is LoadState.Error) {
 
-                binding?.apply {
+                binding.apply {
                     tvNotFoundError.animateVisibility(true)
                     ivNotFoundError.animateVisibility(true)
                     rvStory.animateVisibility(false)
                 }
             } else {
 
-                binding?.apply {
+                binding.apply {
                     tvNotFoundError.animateVisibility(false)
                     ivNotFoundError.animateVisibility(false)
                     rvStory.animateVisibility(true)
@@ -115,7 +113,7 @@ class HomeFragment : Fragment() {
             }
 
 
-            binding?.swipeRefresh?.isRefreshing = loadState.source.refresh is LoadState.Loading
+            binding.swipeRefresh.isRefreshing = loadState.source.refresh is LoadState.Loading
         }
 
         try {

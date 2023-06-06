@@ -38,6 +38,9 @@ android {
     viewBinding {
         enabled true
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -104,4 +107,5 @@ dependencies {
     // Special testing
     testImplementation "androidx.arch.core:core-testing:2.2.0" // InstantTaskExecutorRule
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4" //TestCoroutineDispatcher
+
 }

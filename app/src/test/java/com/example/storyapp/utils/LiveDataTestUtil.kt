@@ -1,13 +1,11 @@
 package com.example.storyapp.utils
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.annotation.VisibleForTesting
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-
-
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
 fun <T> LiveData<T>.getOrAwaitValue(
@@ -42,12 +40,3 @@ fun <T> LiveData<T>.getOrAwaitValue(
     return data as T
 }
 
-suspend fun <T> LiveData<T>.observeForTesting(block: suspend  () -> Unit) {
-    val observer = Observer<T> { }
-    try {
-        observeForever(observer)
-        block()
-    } finally {
-        removeObserver(observer)
-    }
-}

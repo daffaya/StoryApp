@@ -121,7 +121,7 @@ class MapsFragment : Fragment() {
     private fun markUserLocation() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             launch {
-                mapsViewModel.getStoryLocation(token).collect { result ->
+                mapsViewModel.getStoryLocations().observe(viewLifecycleOwner) { result ->
                     result.onSuccess { response ->
                         response.storyResponseItems.forEach { story ->
                             if (story.lat != null && story.lon != null) {
@@ -140,6 +140,7 @@ class MapsFragment : Fragment() {
             }
         }
     }
+
 
     private val requestPermissionLauncher =
         registerForActivityResult(
