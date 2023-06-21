@@ -36,7 +36,7 @@ This course is a part of self-paced learning at Bangkit 2023 Mobile Development 
 
 1. Clone this repository.
 2. Open the project in Android Studio.
-3. Add your Github API Token inside the app > data > remote > ApiService
+3. Add your Maps Token inside the Manifest.
 4. Build and run the application on your device or emulator.
 
 ## Usage
